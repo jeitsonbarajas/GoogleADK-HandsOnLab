@@ -126,6 +126,21 @@ python main.py
 adk web --host 0.0.0.0 --allow_origins "*"
 ```
 
+# CASOS DE USO
+
+## Casos de FACTURACIÓN
+    * La factura del mes de febrero aparece duplicada en el sistema y ya se realizó el pago una sola vez. Necesito que anulen el cobro adicional.
+
+    * Me están cobrando un servicio que cancelé hace 3 meses. El débito automático sigue activo y quiero la devolución de los últimos 2 meses cobrados.
+
+    * El NIT registrado en la factura electrónica está incorrecto, lo que está causando rechazo en la DIAN. Necesito corrección urgente.
+ 
+## Casos TÉCNICOS
+    * Error 403 al intentar acceder al endpoint /api/v2/glosas desde Azure. Las credenciales son correctas pero el servidor rechaza la solicitud.
+
+    * El servicio de autenticación OAuth2 devuelve token_expired a los 2 minutos cuando el tiempo configurado es 60 minutos. Ocurre solo en el ambiente de producción.
+
+    * La base de datos Azure SQL no responde después de las 11pm. El connection pool se agota y los logs muestran timeout en la cadena de conexión.
 
 
 ### 📝 Modificar Agentes
