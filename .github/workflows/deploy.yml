@@ -1,0 +1,70 @@
+name: Deploy to Vertex AI Agent Engine
+
+on:
+  push:
+    branches:
+      - google-adk
+
+env:
+  PROJECT_ID: careful-aleph-493015-f6
+  REGION: us-east1
+
+jobs:
+  deploy:
+    name: Deploy Agent Engine
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write   # Required for Workload Identity Federation
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Checkout
+      # -----------------------------------------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # 2. Authenticate to GCP via Workload Identity Federation (no JSON key)
+      # -----------------------------------------------------------------------
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # -----------------------------------------------------------------------
+      # 3. Set up Python
+      # -----------------------------------------------------------------------
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # -----------------------------------------------------------------------
+      # 4. Install dependencies
+      # -----------------------------------------------------------------------
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      # -----------------------------------------------------------------------
+      # 5. Deploy to Vertex AI Agent Engine
+      # -----------------------------------------------------------------------
+      - name: Deploy to Vertex AI Agent Engine
+        env:
+          GOOGLE_CLOUD_PROJECT: ${{ env.PROJECT_ID }}
+          GOOGLE_CLOUD_LOCATION: ${{ env.REGION }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          AGENT_ENGINE_RESOURCE_FILE: agent_engine_resource.txt
+        run: python deploy_agent_engine.py
+
+      # -----------------------------------------------------------------------
+      # 6. Save resource name back to repo
+      # -----------------------------------------------------------------------
+      - name: Save Agent Engine resource name
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agent_engine_resource.txt
+          git diff --cached --quiet || git commit -m "chore: update agent engine resource name [skip ci]"
+          git push

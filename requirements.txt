@@ -1,0 +1,20 @@
+# Core dependencies
+google-adk>=1.0.0
+
+# Vertex AI Agent Engine
+google-cloud-aiplatform>=1.87.0
+google-cloud-storage>=2.10.0
+
+# Web framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+
+# HTTP client
+httpx>=0.25.0
+
+# Configuration
+python-dotenv>=1.0.0
+
+# Production dependencies
+gunicorn>=21.0.0
+pydantic>=2.0.0
